@@ -1619,7 +1619,7 @@ def run_command(cmd):
         cmd = cmd.replace(text, new_text)
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE, shell=True)
+                            stderr=subprocess.PIPE, shell=True, bufsize=-1)
     result = proc.communicate()
     return_code = proc.returncode
     try:
@@ -1825,6 +1825,7 @@ def run_build_commands(cmds, msgs):
     """."""
     is_ok = True
     n = 0
+    percent = 0
 
     non_blank_msgs = [m for m in msgs if m]
     total = len(non_blank_msgs)
