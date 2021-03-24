@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 
 import os
 from . import sys_info
+import sublime
 
 
 def get_document_path():
@@ -45,9 +46,10 @@ def get_user_config_path():
     _os_name = sys_info.get_os_name()
     home = os.getenv('HOME')
     if _os_name == 'windows':
-        user_config_path = os.getenv('LOCALAPPDATA')
+        '''user_config_path = os.getenv('LOCALAPPDATA')
         if not user_config_path:
-            user_config_path = os.getenv('APPDATA')
+            user_config_path = os.getenv('APPDATA')'''
+        user_config_path = os.path.split(sublime.executable_path())[0]
     elif _os_name == 'linux':
         user_config_path = os.path.join(home, '.config')
     elif _os_name == 'osx':
