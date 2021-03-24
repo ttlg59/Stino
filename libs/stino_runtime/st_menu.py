@@ -1005,6 +1005,10 @@ def update_board_menu(arduino_info):
     text += '\t' * 5 + '{"caption": "-"}'
 
     for board_name in board_names:
+        if '\"' in board_name:
+            board_name = board_name.replace('\"','')    # Fix: remove double quotes from board name
+        if '\'' in board_name:
+            board_name = board_name.replace('\'','')    # Fix: remove single quotes from board name            
         text += ',\n'
         text += '\t' * 5 + '{\n'
         text += '\t' * 6 + '"caption": "%s",\n' % board_name
