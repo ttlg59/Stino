@@ -15,7 +15,7 @@ from . import sys_dirs
 
 def arduino_app_path():
     """Function Docs."""
-    app_path = os.path.join(sys_dirs.get_user_config_path(), 'Arduino15')
+    app_path = os.path.join(sys_dirs.get_user_config_path(), 'Arduino')
     if sys_info.get_os_name() == 'linux':
         home = os.getenv('HOME')
         app_path = os.path.join(home, '.arduino15')
