@@ -1645,6 +1645,7 @@ def get_build_cmds(cmds_info, prj_path, prj_build_path, inc_text,
         build_message_queue.put(key)
         build_message_queue.put(cmds_info[key])
         build_message_queue.put('========================================================')
+        
     return cmds, msgs
 
 
