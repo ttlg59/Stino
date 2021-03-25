@@ -1405,7 +1405,7 @@ def get_build_cmds(cmds_info, prj_path, prj_build_path, inc_text,
     sel_version = arduino_sel.get('version', '')
     sel_board = arduino_sel.get('board@%s' % sel_platform, '')
     sel_board_options = selected.get_sel_board_options(arduino_info)
-
+    
     if not is_full_build:
         if sel_package != last_package:
             is_full_build = True
@@ -1486,7 +1486,18 @@ def get_build_cmds(cmds_info, prj_path, prj_build_path, inc_text,
             os.remove(core_a_path)
 
     #########################
+    keys = []
     if build_src_paths:
+        #---------------- add command when exist recipe.hooks.prebuild common -----------------
+        for key in cmds_info:
+            if 'recipe.hooks.prebuild' in cmds_info:
+                keys.append(key)
+        keys.sort()
+        for key in keys:
+            cmd = cmds_info.get(key, '')
+            cmds.append(cmd)
+            msgs.append('')
+        #--------------------------------------------------------------------------------------        
         sketch_prebuild_cmds, _msgs = get_hooks_cmds(cmds_info,
                                                      'sketch.prebuild')
         cmds += sketch_prebuild_cmds
@@ -1605,6 +1616,36 @@ def get_build_cmds(cmds_info, prj_path, prj_build_path, inc_text,
     postbuild_cmds, _msgs = get_hooks_cmds(cmds_info, 'postbuild')
     cmds += postbuild_cmds
     msgs += _msgs
+    
+    lib_path = {}
+    #======================= Create some link to replace again variable in commmand
+    platform_path = selected.get_build_platform_path(arduino_info)
+    hardward_path = os.path.dirname(platform_path)
+    arduino_path = default_arduino_dirs.arduino_app_path()
+    build_source_path = os.path.join(prj_build_path, 'sketch')
+    lib_path['runtime.platform.path'] = platform_path
+    lib_path['runtime.hardware.path'] = hardward_path
+    lib_path['runtime.ide.path'] = arduino_path
+    lib_path['build.source.path'] = build_source_path
+    lib_path['build.path'] = prj_build_path
+    
+    # recheck all command
+    for index in range(0, len(cmds)-1):
+        variants = selected.find_variants_in_braces(cmds[index])
+        for variant in variants:
+            if variant in lib_path:
+                text = '{' + variant + '}'
+                cmds[index] = cmds[index].replace(text, lib_path[variant])
+                
+            if variant in cmds_info:
+                text = '{' + variant + '}'
+                cmds[index] = cmds[index].replace(text, cmds_info[variant])
+                
+    build_message_queue.put('Print all command for debug')
+    for key in cmds_info:
+        build_message_queue.put(key)
+        build_message_queue.put(cmds_info[key])
+        build_message_queue.put('========================================================')
     return cmds, msgs
 
 
