@@ -1376,7 +1376,6 @@ def get_changed_src_paths(h_path, h_cpp_info, last_build_info,
                                                   used_h_paths)
     return changed_src_paths, used_h_paths
 
-
 def get_build_cmds(cmds_info, prj_path, prj_build_path, inc_text,
                    prj_src_paths, lib_src_paths, core_src_paths, h_cpp_info):
     """."""
